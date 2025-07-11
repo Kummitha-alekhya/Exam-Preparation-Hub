@@ -24,9 +24,11 @@ import {
   User, 
   LogOut,
   GraduationCap,
-  Settings
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import ThemeToggle from "./ThemeToggle";
+import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 const navigationItems = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
@@ -51,11 +53,6 @@ export function AppSidebar() {
     return currentPath.startsWith(path);
   };
 
-  const getNavCls = (path: string) =>
-    isActive(path) 
-      ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium border-r-2 border-sidebar-primary" 
-      : "hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground";
-
   const handleSignOut = async () => {
     await signOut();
     navigate("/auth");
@@ -65,43 +62,89 @@ export function AppSidebar() {
 
   return (
     <Sidebar
-      className={`${collapsed ? "w-14" : "w-64"} transition-all duration-300 border-r border-sidebar-border bg-sidebar`}
+      className={`${collapsed ? "w-16" : "w-64"} transition-all duration-300 border-r border-sidebar-border bg-sidebar shadow-soft`}
       collapsible="icon"
     >
       <SidebarHeader className="border-b border-sidebar-border p-4">
-        <div className="flex items-center gap-3">
-          <div className="bg-gradient-primary p-2 rounded-lg">
+        <motion.div 
+          className="flex items-center gap-3"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <div className="bg-gradient-primary p-2 rounded-xl shadow-soft">
             <GraduationCap className="w-6 h-6 text-primary-foreground" />
           </div>
           {!collapsed && (
-            <div>
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3, delay: 0.1 }}
+            >
               <h2 className="font-bold text-lg text-sidebar-foreground">ExamPrep</h2>
               <p className="text-xs text-sidebar-foreground/70">Study Hub</p>
-            </div>
+            </motion.div>
           )}
-        </div>
+          {!collapsed && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3, delay: 0.2 }}
+              className="ml-auto"
+            >
+              <ThemeToggle />
+            </motion.div>
+          )}
+        </motion.div>
       </SidebarHeader>
 
-      <SidebarContent className="p-2">
+      <SidebarContent className="p-3">
         <SidebarGroup>
-          <SidebarGroupLabel className={collapsed ? "hidden" : "block"}>
+          <SidebarGroupLabel className={cn(
+            "text-sidebar-foreground/80 font-medium mb-3 transition-all duration-300",
+            collapsed ? "hidden" : "block"
+          )}>
             Navigation
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
-              {navigationItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <NavLink 
-                      to={item.url} 
-                      end={item.url === "/"} 
-                      className={getNavCls(item.url)}
-                    >
-                      <item.icon className="w-5 h-5 shrink-0" />
-                      {!collapsed && <span className="ml-3">{item.title}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
+            <SidebarMenu className="space-y-2">
+              {navigationItems.map((item, index) => (
+                <motion.div
+                  key={item.title}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                >
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                      <NavLink 
+                        to={item.url} 
+                        end={item.url === "/"} 
+                        className={cn(
+                          "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 hover:scale-[1.02]",
+                          isActive(item.url) 
+                            ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium shadow-soft border border-sidebar-border" 
+                            : "hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"
+                        )}
+                      >
+                        <item.icon className={cn(
+                          "w-5 h-5 shrink-0 transition-colors",
+                          isActive(item.url) ? "text-sidebar-accent-foreground" : "text-sidebar-foreground/70"
+                        )} />
+                        {!collapsed && (
+                          <span className="font-medium">{item.title}</span>
+                        )}
+                        {!collapsed && isActive(item.url) && (
+                          <motion.div
+                            className="w-1.5 h-1.5 bg-sidebar-accent-foreground rounded-full ml-auto"
+                            layoutId="activeIndicator"
+                            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                          />
+                        )}
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </motion.div>
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
@@ -109,11 +152,16 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="border-t border-sidebar-border p-4">
-        <div className="space-y-2">
+        <motion.div 
+          className="space-y-3"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.2 }}
+        >
           {!collapsed && (
-            <div className="flex items-center gap-3 p-2 rounded-lg bg-sidebar-accent/30">
-              <Avatar className="w-8 h-8">
-                <AvatarFallback className="bg-gradient-primary text-primary-foreground text-sm">
+            <div className="flex items-center gap-3 p-3 rounded-xl bg-sidebar-accent/20 border border-sidebar-border/50">
+              <Avatar className="w-8 h-8 ring-2 ring-sidebar-border">
+                <AvatarFallback className="bg-gradient-primary text-primary-foreground text-sm font-semibold">
                   {userInitials}
                 </AvatarFallback>
               </Avatar>
@@ -132,7 +180,7 @@ export function AppSidebar() {
                 variant="ghost"
                 size="icon"
                 onClick={handleSignOut}
-                className="w-10 h-10 text-sidebar-foreground hover:bg-sidebar-accent"
+                className="w-10 h-10 rounded-xl text-sidebar-foreground hover:bg-sidebar-accent/50 transition-all duration-200"
               >
                 <LogOut className="w-4 h-4" />
               </Button>
@@ -140,20 +188,20 @@ export function AppSidebar() {
               <Button
                 variant="ghost"
                 onClick={handleSignOut}
-                className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent"
+                className="w-full justify-start rounded-xl text-sidebar-foreground hover:bg-sidebar-accent/50 transition-all duration-200"
               >
                 <LogOut className="w-4 h-4 mr-2" />
                 Sign Out
               </Button>
             )}
           </div>
-        </div>
+        </motion.div>
       </SidebarFooter>
 
       {/* Trigger for collapsing sidebar - only show when collapsed */}
       {collapsed && (
         <div className="absolute top-4 -right-3">
-          <SidebarTrigger className="bg-sidebar border border-sidebar-border shadow-card" />
+          <SidebarTrigger className="bg-sidebar border border-sidebar-border shadow-card rounded-xl" />
         </div>
       )}
     </Sidebar>
