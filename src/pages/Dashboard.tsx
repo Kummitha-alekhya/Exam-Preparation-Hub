@@ -11,7 +11,17 @@ import {
   Target,
   CheckCircle2,
   Calendar,
-  BarChart3
+  BarChart3,
+  Code2,
+  Database,
+  Globe,
+  Coffee,
+  Zap,
+  Layers,
+  Server,
+  Wrench,
+  GitBranch,
+  Cpu
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -50,6 +60,23 @@ const Dashboard = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  // Programming language icons
+  const getSubjectIcon = (name: string) => {
+    switch (name?.toLowerCase()) {
+      case 'python': return <Code2 className="w-4 h-4 text-blue-500" />;
+      case 'javascript': return <Zap className="w-4 h-4 text-yellow-500" />;
+      case 'sql': return <Database className="w-4 h-4 text-green-500" />;
+      case 'java': return <Coffee className="w-4 h-4 text-orange-500" />;
+      case 'c++': return <Cpu className="w-4 h-4 text-purple-500" />;
+      case 'html/css': return <Globe className="w-4 h-4 text-pink-500" />;
+      case 'react': return <Layers className="w-4 h-4 text-cyan-500" />;
+      case 'node.js': return <Server className="w-4 h-4 text-green-600" />;
+      case 'data structures': return <GitBranch className="w-4 h-4 text-indigo-500" />;
+      case 'algorithms': return <Wrench className="w-4 h-4 text-red-500" />;
+      default: return <Code2 className="w-4 h-4 text-gray-500" />;
+    }
+  };
 
   useEffect(() => {
     if (user) {
@@ -325,9 +352,12 @@ const Dashboard = () => {
               <div className="space-y-4">
                 {stats.upcomingPlans.map((plan) => (
                   <div key={plan.id} className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-                    <div>
-                      <p className="font-medium text-sm">{plan.topic}</p>
-                      <p className="text-xs text-muted-foreground">{plan.subject_name}</p>
+                    <div className="flex items-center gap-3">
+                      {getSubjectIcon(plan.subject_name)}
+                      <div>
+                        <p className="font-medium text-sm">{plan.topic}</p>
+                        <p className="text-xs text-muted-foreground">{plan.subject_name}</p>
+                      </div>
                     </div>
                     <div className="text-right">
                       <p className="text-xs font-medium">

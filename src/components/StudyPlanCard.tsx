@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, CheckCircle2, Clock, Trash2, Target } from "lucide-react";
+import { Calendar, CheckCircle2, Clock, Trash2, Target, Code2, Database, Globe, Coffee, Zap, Layers, Server, Wrench, GitBranch, Cpu } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface StudyPlan {
@@ -27,6 +27,39 @@ const StudyPlanCard = ({ plan, onStatusUpdate, onDelete, index }: StudyPlanCardP
   const targetDate = new Date(plan.target_date);
   const isOverdue = !isCompleted && targetDate < new Date();
   const daysUntilTarget = Math.ceil((targetDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+
+  // Programming language icons and colors
+  const getSubjectIcon = (name: string) => {
+    switch (name?.toLowerCase()) {
+      case 'python': return <Code2 className="w-4 h-4 text-blue-500" />;
+      case 'javascript': return <Zap className="w-4 h-4 text-yellow-500" />;
+      case 'sql': return <Database className="w-4 h-4 text-green-500" />;
+      case 'java': return <Coffee className="w-4 h-4 text-orange-500" />;
+      case 'c++': return <Cpu className="w-4 h-4 text-purple-500" />;
+      case 'html/css': return <Globe className="w-4 h-4 text-pink-500" />;
+      case 'react': return <Layers className="w-4 h-4 text-cyan-500" />;
+      case 'node.js': return <Server className="w-4 h-4 text-green-600" />;
+      case 'data structures': return <GitBranch className="w-4 h-4 text-indigo-500" />;
+      case 'algorithms': return <Wrench className="w-4 h-4 text-red-500" />;
+      default: return <Code2 className="w-4 h-4 text-gray-500" />;
+    }
+  };
+
+  const getSubjectColor = (name: string) => {
+    switch (name?.toLowerCase()) {
+      case 'python': return 'from-blue-500/10 to-blue-600/5 border-l-blue-500';
+      case 'javascript': return 'from-yellow-500/10 to-yellow-600/5 border-l-yellow-500';
+      case 'sql': return 'from-green-500/10 to-green-600/5 border-l-green-500';
+      case 'java': return 'from-orange-500/10 to-orange-600/5 border-l-orange-500';
+      case 'c++': return 'from-purple-500/10 to-purple-600/5 border-l-purple-500';
+      case 'html/css': return 'from-pink-500/10 to-pink-600/5 border-l-pink-500';
+      case 'react': return 'from-cyan-500/10 to-cyan-600/5 border-l-cyan-500';
+      case 'node.js': return 'from-green-600/10 to-green-700/5 border-l-green-600';
+      case 'data structures': return 'from-indigo-500/10 to-indigo-600/5 border-l-indigo-500';
+      case 'algorithms': return 'from-red-500/10 to-red-600/5 border-l-red-500';
+      default: return 'from-gray-500/10 to-gray-600/5 border-l-gray-500';
+    }
+  };
 
   const getStatusBadge = () => {
     if (isCompleted) {
@@ -75,10 +108,10 @@ const StudyPlanCard = ({ plan, onStatusUpdate, onDelete, index }: StudyPlanCardP
       className="group"
     >
       <Card className={cn(
-        "relative overflow-hidden border-0 shadow-card hover:shadow-hover transition-all duration-300",
-        isCompleted && "opacity-90 bg-gradient-to-br from-success/5 to-success/10",
-        isOverdue && "border-l-4 border-l-destructive bg-gradient-to-br from-destructive/5 to-destructive/10",
-        !isCompleted && !isOverdue && "bg-gradient-to-br from-card to-primary/5"
+        "relative overflow-hidden border-0 shadow-card hover:shadow-hover transition-all duration-300 border-l-4",
+        isCompleted && "opacity-90 bg-gradient-to-br from-success/5 to-success/10 border-l-success",
+        isOverdue && `bg-gradient-to-br from-destructive/5 to-destructive/10 border-l-destructive`,
+        !isCompleted && !isOverdue && `bg-gradient-to-br ${getSubjectColor(plan.subjects?.name || '')}`
       )}>
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between gap-3">
@@ -86,9 +119,12 @@ const StudyPlanCard = ({ plan, onStatusUpdate, onDelete, index }: StudyPlanCardP
               <CardTitle className="text-lg font-semibold text-foreground line-clamp-2 group-hover:text-primary transition-colors">
                 {plan.topic}
               </CardTitle>
-              <p className="text-sm text-muted-foreground mt-1 font-medium">
-                {plan.subjects?.name || 'Unknown Subject'}
-              </p>
+              <div className="flex items-center gap-2 mt-1">
+                {getSubjectIcon(plan.subjects?.name || '')}
+                <p className="text-sm text-muted-foreground font-medium">
+                  {plan.subjects?.name || 'Unknown Subject'}
+                </p>
+              </div>
             </div>
             {getStatusBadge()}
           </div>

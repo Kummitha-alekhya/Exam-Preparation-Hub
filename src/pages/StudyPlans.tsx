@@ -86,7 +86,7 @@ const StudyPlans = () => {
       const { data, error } = await supabase
         .from('subjects')
         .select('*')
-        .eq('created_by', user?.id);
+        .order('name');
 
       if (error) throw error;
       setSubjects(data || []);

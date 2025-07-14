@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Calendar, Save, X } from "lucide-react";
+import { Calendar, Save, X, Code2, Database, Globe, Coffee, Zap, Layers, Server, Wrench, GitBranch, Cpu } from "lucide-react";
 
 interface StudyPlanModalProps {
   isOpen: boolean;
@@ -25,6 +25,23 @@ const StudyPlanModal = ({ isOpen, onClose, onSubmit, subjects, editingPlan }: St
     subject_id: editingPlan?.subject_id || "",
     target_date: editingPlan?.target_date || ""
   });
+
+  // Programming language icons and colors
+  const getSubjectIcon = (name: string) => {
+    switch (name.toLowerCase()) {
+      case 'python': return <Code2 className="w-4 h-4 text-blue-500" />;
+      case 'javascript': return <Zap className="w-4 h-4 text-yellow-500" />;
+      case 'sql': return <Database className="w-4 h-4 text-green-500" />;
+      case 'java': return <Coffee className="w-4 h-4 text-orange-500" />;
+      case 'c++': return <Cpu className="w-4 h-4 text-purple-500" />;
+      case 'html/css': return <Globe className="w-4 h-4 text-pink-500" />;
+      case 'react': return <Layers className="w-4 h-4 text-cyan-500" />;
+      case 'node.js': return <Server className="w-4 h-4 text-green-600" />;
+      case 'data structures': return <GitBranch className="w-4 h-4 text-indigo-500" />;
+      case 'algorithms': return <Wrench className="w-4 h-4 text-red-500" />;
+      default: return <Code2 className="w-4 h-4 text-gray-500" />;
+    }
+  };
 
   const handleSubmit = () => {
     if (!formData.topic || !formData.subject_id || !formData.target_date) {
@@ -100,8 +117,11 @@ const StudyPlanModal = ({ isOpen, onClose, onSubmit, subjects, editingPlan }: St
                     </SelectTrigger>
                     <SelectContent className="rounded-xl">
                       {subjects.map((subject) => (
-                        <SelectItem key={subject.id} value={subject.id}>
-                          {subject.name}
+                        <SelectItem key={subject.id} value={subject.id} className="flex items-center gap-2">
+                          <div className="flex items-center gap-2">
+                            {getSubjectIcon(subject.name)}
+                            <span>{subject.name}</span>
+                          </div>
                         </SelectItem>
                       ))}
                     </SelectContent>
